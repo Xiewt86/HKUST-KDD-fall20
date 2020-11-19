@@ -7,6 +7,15 @@ import sys
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
+def acc(outputs, labels):
+    total = len(labels)
+    cnt = 0.0
+    for i in range(len(outputs)):
+        if round(outputs[i]) == labels[i]:
+            cnt += 1
+    return cnt / total
+
+
 def parse_args(argv):
     batch_size = 128
     its = 1000
@@ -42,19 +51,30 @@ def loss_batch(model, batch_size, data_feeder):
         output = model(data_seek1, data_serve1, data_seek2, data_serve2, data_profile1, data_profile2)
         outputs[i] = output
         labels[i] = label
-    return criterion(outputs, labels)
+    return criterion(outputs, labels), outputs, labels
 
 
 def train(model, itr_total=1000, batch_size=256, lr=1e-4, weight_decay=0.0):
-    dataset = MyDataset()
-    data_feeder = DataFeeder(dataset)
+    dataset_train = MyDataset()
+    data_feeder_train = DataFeeder(dataset_train)
+    dataset_test = MyDataset(train=False)
+    data_feeder_test = DataFeeder(dataset_test)
+
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     for itr in range(itr_total):
-        loss = loss_batch(model, batch_size, data_feeder)
+        loss, outputs_train, labels_train = loss_batch(model, batch_size, data_feeder_train)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        print('Iteration: {}\tLoss: {}'.format(itr, loss.detach().cpu().numpy()))
+        print('Iteration: {}\tLoss: {}\tTraining acc: {}'.format(itr, loss.detach().cpu().numpy(),
+                                                                 acc(outputs_train.detach().cpu().numpy(),
+                                                                     labels_train.detach().cpu().numpy())))
+
+        if itr % 10 == 0:
+            loss, outputs_test, labels_test = loss_batch(model, 500, data_feeder_test)
+            print('Validation:\tLoss: {}\tTraining acc: {}'.format(loss.detach().cpu().numpy(),
+                                                                   acc(outputs_test.detach().cpu().numpy(),
+                                                                       labels_test.detach().cpu().numpy())))
 
 
 if __name__ == "__main__":
