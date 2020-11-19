@@ -2,6 +2,8 @@ from utils import *
 import torch
 import random
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 class MyDataset:
     def __init__(self, train=True):
@@ -23,13 +25,13 @@ class MyDataset:
         data_np = np.array(self.raw_trajs[plate][day_id][work_type][task_idx])[:, cols]
         data_tensor = torch.from_numpy(data_np).float()
         data_tensor = data_tensor.reshape((1, data_tensor.shape[0], data_tensor.shape[1]))
-        return data_tensor
+        return data_tensor.to(device)
 
     def get_profile(self, plate, day_id):
         data_np = np.array(self.profiles[plate][day_id])
         data_tensor = torch.from_numpy(data_np).float()
         data_tensor = data_tensor.reshape((1, data_tensor.shape[0]))
-        return data_tensor
+        return data_tensor.to(device)
 
 
 class DataFeeder:
