@@ -1,8 +1,10 @@
-from models import *
-from dataset.dataset import *
-import torch
 import getopt
 import sys
+
+import torch
+
+from dataset.dataset import *
+from models import *
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -66,15 +68,16 @@ def train(model, itr_total=1000, batch_size=256, lr=1e-4, weight_decay=0.0):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        print('Iteration: {}\tLoss: {}\tTraining acc: {}'.format(itr, loss.detach().cpu().numpy(),
-                                                                 acc(outputs_train.detach().cpu().numpy(),
-                                                                     labels_train.detach().cpu().numpy())))
+        print('Iteration: {}\tLoss: {:1.4f}\tTraining acc: {:1.4f}'.format(itr, loss.detach().cpu().numpy(),
+                                                                           acc(outputs_train.detach().cpu().numpy(),
+                                                                               labels_train.detach().cpu().numpy())))
 
         if itr % 20 == 0:
             loss, outputs_test, labels_test = loss_batch(model, 500, data_feeder_test)
-            print('------------------- Validation:\tLoss: {}\tValidation acc: {}'.format(loss.detach().cpu().numpy(),
-                                                                   acc(outputs_test.detach().cpu().numpy(),
-                                                                       labels_test.detach().cpu().numpy())))
+            print('----------------------- Validation:\tLoss: {:1.4f}\tValidation acc: {:1.4f}'.format(
+                loss.detach().cpu().numpy(),
+                acc(outputs_test.detach().cpu().numpy(),
+                    labels_test.detach().cpu().numpy())))
 
 
 if __name__ == "__main__":
