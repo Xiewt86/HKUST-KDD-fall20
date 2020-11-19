@@ -56,7 +56,7 @@ def loss_batch(model, batch_size, data_feeder):
     return criterion(outputs, labels), outputs, labels
 
 
-def train(model, itr_total=1000, batch_size=256, lr=1e-4, weight_decay=0.0):
+def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0):
     dataset_train = MyDataset()
     data_feeder_train = DataFeeder(dataset_train)
     dataset_test = MyDataset(train=False)
