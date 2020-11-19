@@ -72,7 +72,7 @@ def train(model, itr_total=1000, batch_size=256, lr=1e-4, weight_decay=0.0):
 
         if itr % 10 == 0:
             loss, outputs_test, labels_test = loss_batch(model, 500, data_feeder_test)
-            print('Validation:\tLoss: {}\tTraining acc: {}'.format(loss.detach().cpu().numpy(),
+            print('------------------- Validation:\tLoss: {}\tValidation acc: {}'.format(loss.detach().cpu().numpy(),
                                                                    acc(outputs_test.detach().cpu().numpy(),
                                                                        labels_test.detach().cpu().numpy())))
 
