@@ -20,7 +20,7 @@ def acc(outputs, labels):
 
 def parse_args(argv):
     batch_size = 128
-    its = 1000
+    its = 10000
     lr = 1e-4
     weight_decay = 1e-4
     hlp_msg = 'python main.py -b <batch size> -i <iteration> -l <learning rate> -w <weight decay>'
