@@ -21,7 +21,8 @@ class SiameseNet(nn.Module):
             nn.ReLU(),
             nn.Linear(32, 8),
             nn.ReLU(),
-            nn.Linear(8, 2)
+            nn.Linear(8, 1),
+            nn.Sigmoid()
         )
 
     def forward(self, x_seek1, x_serve1, x_seek2, x_serve2, x_profile1, x_profile2):
@@ -51,6 +52,6 @@ class Subnet(nn.Module):
 
     def forward(self, x):
         out, _ = self.lstm1(x)
-        out, _ = self.lstm2(out[:, out.shape[1]-1:out.shape[1], :])
+        out, _ = self.lstm2(out)
         embedding = self.fc1(out[:, -1, :])
         return embedding
