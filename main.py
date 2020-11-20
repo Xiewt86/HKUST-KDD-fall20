@@ -25,7 +25,7 @@ def parse_args(argv):
     weight_decay = 1e-4
     log_every = 100
     n_plates = 500
-    n_days = 9
+    n_days = 5
     log_name = 'torch.log'
     hlp_msg = 'python main.py -b <batch size> -i <iteration> -l <learning rate> -w <weight decay> -e <log every> -n <log name> -p <num plates> -d <num days>'
     try:
