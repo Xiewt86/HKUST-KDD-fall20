@@ -103,7 +103,7 @@ if __name__ == "__main__":
           '_inputs_' + 'all' + '_speed' + str(True) + '_profile' + str(True)
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)s %(message)s',
-                        filename=log_name,
+                        filename=tag+'.log',
                         filemode='a')
     model = SiameseNet(4).to(device)
     model = model.float()
