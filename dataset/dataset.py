@@ -6,13 +6,13 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class MyDataset:
-    def __init__(self, train=True):
+    def __init__(self, train=True, num_plates=500):
         self.raw_trajs = load_data('./dataset/', 'trajs_with_speed500.pkl')
         self.profiles = load_data('./dataset/', 'profile_features500.pkl')
         self.plates = load_data('./dataset/', 'plates.pkl')
         self.plates.remove('d1329')
         if train:
-            self.plates = self.plates[:500]
+            self.plates = self.plates[:num_plates]
         else:
             self.plates = self.plates[2000:]
 
@@ -34,12 +34,13 @@ class MyDataset:
 
 
 class DataFeeder:
-    def __init__(self, dataset):
+    def __init__(self, dataset, days):
         self.dataset = dataset
+        self.days = days
 
     def get_pair(self):
-        day_id1 = random.randint(0, 9)
-        day_id2 = random.randint(0, 9)
+        day_id1 = random.sample(self.days, 1)[0]
+        day_id2 = random.sample(self.days, 1)[0]
         plate1 = random.sample(self.dataset.plates, 1)[0]
         if random.random() <= 0.5:
             plate2 = plate1

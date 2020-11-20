@@ -24,10 +24,12 @@ def parse_args(argv):
     lr = 1e-4
     weight_decay = 1e-4
     log_every = 100
+    n_plates = 500
+    n_days = 10
     log_name = 'torch.log'
-    hlp_msg = 'python main.py -b <batch size> -i <iteration> -l <learning rate> -w <weight decay> -l <log every> -n <log name>'
+    hlp_msg = 'python main.py -b <batch size> -i <iteration> -l <learning rate> -w <weight decay> -e <log every> -n <log name> -p <num plates> -d <num days>'
     try:
-        opts, args = getopt.getopt(argv, "hb:i:l:w:l:n:")
+        opts, args = getopt.getopt(argv, "hb:i:l:w:e:n:p:d:")
     except getopt.GetoptError:
         print(hlp_msg)
         sys.exit(2)
@@ -43,11 +45,15 @@ def parse_args(argv):
             lr = float(arg)
         elif opt == "-w":
             weight_decay = float(arg)
-        elif opt == "-l":
+        elif opt == "-e":
             log_every = int(arg)
         elif opt == "-n":
             log_name = str(arg)
-    return batch_size, its, lr, weight_decay, log_every, log_name
+        elif opt == "-p":
+            n_plates = int(arg)
+        elif opt == "-d":
+            n_days = int(arg)
+    return batch_size, its, lr, weight_decay, log_every, log_name, n_plates, n_days
 
 
 def loss_batch(model, batch_size, data_feeder):
@@ -62,12 +68,12 @@ def loss_batch(model, batch_size, data_feeder):
     return criterion(outputs, labels), outputs, labels
 
 
-def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log_every=100):
+def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log_every=100, n_plates=500, n_days=10):
     start_time = time.time()
-    dataset_train = MyDataset()
-    data_feeder_train = DataFeeder(dataset_train)
+    dataset_train = MyDataset(num_plates=n_plates)
+    data_feeder_train = DataFeeder(dataset_train, np.arange(0, n_days))
     dataset_test = MyDataset(train=False)
-    data_feeder_test = DataFeeder(dataset_test)
+    data_feeder_test = DataFeeder(dataset_test, np.arange(n_days, 10))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     for itr in range(itr_total):
@@ -92,11 +98,11 @@ def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log
 
 
 if __name__ == "__main__":
-    b, its, lr, wd, log, log_name = parse_args(sys.argv[1:])
+    b, its, lr, wd, log, log_name, n_plates, n_days = parse_args(sys.argv[1:])
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)s %(message)s',
                         filename=log_name,
                         filemode='a')
     model = SiameseNet(4).to(device)
     model = model.float()
-    train(model, itr_total=its, batch_size=b, lr=lr, weight_decay=wd, log_every=log)
+    train(model, itr_total=its, batch_size=b, lr=lr, weight_decay=wd, log_every=log, n_plates=n_plates, n_days=n_days)
