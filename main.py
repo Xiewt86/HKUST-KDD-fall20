@@ -71,9 +71,9 @@ def loss_batch(model, batch_size, data_feeder):
 def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log_every=100, n_plates=500, n_days=10):
     start_time = time.time()
     dataset_train = MyDataset(num_plates=n_plates)
-    data_feeder_train = DataFeeder(dataset_train, np.arange(0, n_days))
+    data_feeder_train = DataFeeder(dataset_train, np.arange(0, n_days).tolist())
     dataset_test = MyDataset(train=False)
-    data_feeder_test = DataFeeder(dataset_test, np.arange(n_days, 10))
+    data_feeder_test = DataFeeder(dataset_test, np.arange(n_days, 10).tolist())
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     for itr in range(itr_total):
