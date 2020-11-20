@@ -11,11 +11,10 @@ class MyDataset:
         self.profiles = load_data('./dataset/', 'profile_features500.pkl')
         self.plates = load_data('./dataset/', 'plates.pkl')
         self.plates.remove('d1329')
-        self.plates = self.plates[:500]
         if train:
-            self.plates = self.plates[:450]
+            self.plates = self.plates[:500]
         else:
-            self.plates = self.plates[450:]
+            self.plates = self.plates[2000:]
 
     def get_item(self, plate, day_id, work_type, task_idx, speed=True):
         if speed:
