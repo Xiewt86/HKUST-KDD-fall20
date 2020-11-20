@@ -103,6 +103,6 @@ if __name__ == "__main__":
                         format='%(asctime)s %(levelname)s %(message)s',
                         filename=log_name,
                         filemode='a')
-    model = SiameseNet(4).to(device)
+    model = SiameseNet(3).to(device)
     model = model.float()
     train(model, itr_total=its, batch_size=b, lr=lr, weight_decay=wd, log_every=log, n_plates=n_plates, n_days=n_days)

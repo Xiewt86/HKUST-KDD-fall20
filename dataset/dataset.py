@@ -18,9 +18,9 @@ class MyDataset:
 
     def get_item(self, plate, day_id, work_type, task_idx, speed=True):
         if speed:
-            cols = [0, 1, 2, 3]
-        else:
             cols = [0, 1, 2]
+        else:
+            cols = [0, 1]
         data_np = np.array(self.raw_trajs[plate][day_id][work_type][task_idx])[:, cols]
         data_tensor = torch.from_numpy(data_np).float()
         data_tensor = data_tensor.reshape((1, data_tensor.shape[0], data_tensor.shape[1]))
