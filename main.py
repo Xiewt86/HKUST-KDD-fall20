@@ -80,7 +80,7 @@ def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log
         print('Iteration: {}\tLoss: {:1.4f}\tTraining acc: {:1.4f}'.format(itr, loss_train.detach().cpu().numpy(),
                                                                            train_acc))
 
-        if itr % 100 == 0:
+        if (itr % log_every == 0) & (itr != 0):
             loss_test, outputs_test, labels_test = loss_batch(model, 1000, data_feeder_test)
             test_acc = acc(outputs_test.detach().cpu().numpy(), labels_test.detach().cpu().numpy())
             print('----------------------- Validation:\tLoss: {:1.4f}\tValidation acc: {:1.4f}'.format(
