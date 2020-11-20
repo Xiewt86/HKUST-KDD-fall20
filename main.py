@@ -19,7 +19,7 @@ def acc(outputs, labels):
 
 
 def parse_args(argv):
-    batch_size = 128
+    batch_size = 256
     its = 10000
     lr = 1e-4
     weight_decay = 1e-4
