@@ -18,10 +18,24 @@ class MyDataset:
 
     def get_item(self, plate, day_id, work_type, task_idx, speed=True):
         if speed:
-            cols = [0, 1, 2]
+            cols = [0, 1, 2, 3]
         else:
-            cols = [0, 1]
-        data_np = np.array(self.raw_trajs[plate][day_id][work_type][task_idx])[:, cols]
+            cols = [0, 1, 2]
+        data_seg = self.raw_trajs[plate][day_id][work_type]
+        data_list = []
+        min_len = np.inf
+        for i in task_idx:
+            data_list.append(data_seg[i])
+            if len(data_seg[i]) < min_len:
+                min_len = len(data_seg[i])
+        for i in range(len(data_list)):
+            data_list[i] = data_list[i][:min_len]
+        data_np_tmp = np.array(data_list)[:, :, cols]
+
+        data_np = np.zeros((data_np_tmp.shape[1], data_np_tmp.shape[0]*data_np_tmp.shape[2]))
+        for i in range(data_np_tmp.shape[0]):
+            data_np[:, i*data_np_tmp.shape[2]:(i+1)*data_np_tmp.shape[2]] = data_np_tmp[i, :]
+
         data_tensor = torch.from_numpy(data_np).float()
         data_tensor = data_tensor.reshape((1, data_tensor.shape[0], data_tensor.shape[1]))
         return data_tensor.to(device)
@@ -50,13 +64,13 @@ class DataFeeder:
             plate2 = random.sample(self.dataset.plates, 1)[0]
             while plate1 == plate2:
                 plate2 = random.sample(self.dataset.plates, 1)[0]
-        task_seek1 = random.randint(0, len(self.dataset.raw_trajs[plate1][day_id1]['seek']) - 1)
-        task_seek2 = random.randint(0, len(self.dataset.raw_trajs[plate2][day_id2]['seek']) - 1)
+        task_seek1 = np.random.randint(0, len(self.dataset.raw_trajs[plate1][day_id1]['seek']) - 1, size=5)
+        task_seek2 = np.random.randint(0, len(self.dataset.raw_trajs[plate2][day_id2]['seek']) - 1, size=5)
         data_seek1 = self.dataset.get_item(plate1, day_id1, 'seek', task_seek1)
         data_seek2 = self.dataset.get_item(plate2, day_id2, 'seek', task_seek2)
 
-        task_serve1 = random.randint(0, len(self.dataset.raw_trajs[plate1][day_id1]['serve']) - 1)
-        task_serve2 = random.randint(0, len(self.dataset.raw_trajs[plate2][day_id2]['serve']) - 1)
+        task_serve1 = np.random.randint(0, len(self.dataset.raw_trajs[plate1][day_id1]['serve']) - 1, size=5)
+        task_serve2 = np.random.randint(0, len(self.dataset.raw_trajs[plate2][day_id2]['serve']) - 1, size=5)
         data_serve1 = self.dataset.get_item(plate1, day_id1, 'serve', task_serve1)
         data_serve2 = self.dataset.get_item(plate2, day_id2, 'serve', task_serve2)
 

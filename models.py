@@ -46,7 +46,7 @@ class SiameseNet(nn.Module):
 class Subnet(nn.Module):
     def __init__(self, input_size):
         super().__init__()
-        self.lstm1 = nn.LSTM(input_size, 200, batch_first=True)
+        self.lstm1 = nn.LSTM(input_size*5, 200, batch_first=True)
         self.lstm2 = nn.LSTM(200, 100, batch_first=True)
         self.fc1 = nn.Linear(100, 48)
 
