@@ -92,13 +92,15 @@ def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log
                 loss_test.detach().cpu().numpy(),
                 acc(outputs_test.detach().cpu().numpy(),
                     labels_test.detach().cpu().numpy())))
-            logging.info('******iteration: ' + str(itr) + '; loss: ' + str(loss_test) + '; train acc: ' + str(
-                train_acc) + '; test acc: ' + str(test_acc))
+            logging.info('******iteration: ' + str(itr) + '; train loss: ' + str(loss_train.detach().cpu().numpy()) + '; train acc: ' + str(
+                train_acc) + '; test loss: ' + str(loss_test.detach().cpu().numpy()) + '; test acc: ' + str(test_acc))
     logging.info('total running time: ' + str(time.time() - start_time))
 
 
 if __name__ == "__main__":
     b, its, lr, wd, log, log_name, n_plates, n_days = parse_args(sys.argv[1:])
+    tag = str(n_plates) + 'plates_' + 'days' + str(n_days) + \
+          '_inputs_' + 'all' + '_speed' + str(True) + '_profile' + str(True)
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)s %(message)s',
                         filename=log_name,
