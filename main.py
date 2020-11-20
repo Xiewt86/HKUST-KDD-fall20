@@ -7,10 +7,6 @@ from dataset.dataset import *
 from models import *
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename='torch_log.log',
-                    filemode='a')
 
 
 def acc(outputs, labels):
@@ -28,9 +24,10 @@ def parse_args(argv):
     lr = 1e-4
     weight_decay = 1e-4
     log_every = 100
-    hlp_msg = 'python main.py -b <batch size> -i <iteration> -l <learning rate> -w <weight decay> -l <log every>'
+    log_name = 'torch.log'
+    hlp_msg = 'python main.py -b <batch size> -i <iteration> -l <learning rate> -w <weight decay> -l <log every> -n <log name>'
     try:
-        opts, args = getopt.getopt(argv, "hb:i:l:w:")
+        opts, args = getopt.getopt(argv, "hb:i:l:w:l:n:")
     except getopt.GetoptError:
         print(hlp_msg)
         sys.exit(2)
@@ -48,7 +45,9 @@ def parse_args(argv):
             weight_decay = float(arg)
         elif opt == "-l":
             log_every = int(arg)
-    return batch_size, its, lr, weight_decay, log_every
+        elif opt == "-n":
+            log_name = str(arg)
+    return batch_size, its, lr, weight_decay, log_every, log_name
 
 
 def loss_batch(model, batch_size, data_feeder):
@@ -93,7 +92,11 @@ def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log
 
 
 if __name__ == "__main__":
-    b, its, lr, wd, log = parse_args(sys.argv[1:])
+    b, its, lr, wd, log, log_name = parse_args(sys.argv[1:])
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(levelname)s %(message)s',
+                        filename=log_name,
+                        filemode='a')
     model = SiameseNet(4).to(device)
     model = model.float()
     train(model, itr_total=its, batch_size=b, lr=lr, weight_decay=wd, log_every=log)
