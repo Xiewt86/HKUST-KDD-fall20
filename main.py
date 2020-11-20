@@ -25,7 +25,7 @@ def parse_args(argv):
     weight_decay = 1e-4
     log_every = 100
     n_plates = 500
-    n_days = 10
+    n_days = 9
     log_name = 'torch.log'
     hlp_msg = 'python main.py -b <batch size> -i <iteration> -l <learning rate> -w <weight decay> -e <log every> -n <log name> -p <num plates> -d <num days>'
     try:
@@ -68,7 +68,7 @@ def loss_batch(model, batch_size, data_feeder):
     return criterion(outputs, labels), outputs, labels
 
 
-def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log_every=100, n_plates=500, n_days=10):
+def train(model, itr_total=10000, batch_size=256, lr=1e-4, weight_decay=0.0, log_every=100, n_plates=500, n_days=9):
     start_time = time.time()
     dataset_train = MyDataset(num_plates=n_plates)
     data_feeder_train = DataFeeder(dataset_train, np.arange(0, n_days).tolist())
